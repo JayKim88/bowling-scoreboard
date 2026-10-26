@@ -1,18 +1,19 @@
 <script setup lang="ts">
-const frames = [
-  ['9', '/'],
-  ['', 'X'],
-  ['', 'X'],
-  ['7', '2'],
-  ['-', '/'],
-  ['6', '2'],
-  ['', 'X'],
-  ['4', '-'],
-  ['', 'X'],
-  ['X', '7', '/'],
-]
+import { computed, ref } from 'vue'
+import { toFrames } from './domain/frames'
 
-const scores = [10, 24, 34, 58, 83, 90, 110, 123, 142, 161]
+const pinOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+const rolls = ref<number[]>([])
+
+const frames = computed(() => toFrames(rolls.value))
+
+// 칸 수 맞추기는 기호 표시와 함께 처리예정
+const cells = computed(() => frames.value.flat())
+
+function addRoll(pins: number) {
+  rolls.value.push(pins)
+}
 </script>
 
 <template>
@@ -27,25 +28,21 @@ const scores = [10, 24, 34, 58, 83, 90, 110, 123, 142, 161]
       </thead>
 
       <tbody>
-        <!-- 마크 -->
+        <!-- 투구 -->
         <tr>
-          <template v-for="(frame, fi) in frames" :key="fi">
-            <td v-for="(mark, mi) in frame" :key="mi" class="mark">{{ mark }}</td>
-          </template>
+          <td v-for="(cell, i) in cells" :key="i" class="mark">{{ cell }}</td>
         </tr>
         <!-- 누적합 -->
         <tr>
-          <td v-for="(score, si) in scores" :key="si" :colspan="si === 9 ? 3 : 2" class="score">
-            {{ score }}
-          </td>
+          <td v-for="n in 10" :key="n" :colspan="n === 10 ? 3 : 2" class="score"></td>
         </tr>
       </tbody>
     </table>
 
-    <p>Total {{ scores[scores.length - 1] }}</p>
-
     <div class="pins">
-      <button v-for="n in 11" :key="n" type="button">{{ n - 1 }}</button>
+      <button v-for="pins in pinOptions" :key="pins" type="button" @click="addRoll(pins)">
+        {{ pins }}
+      </button>
     </div>
   </main>
 </template>
