@@ -1,3 +1,9 @@
+type Pins = number
+type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+type Mark = 'X' | '/' | '-' | '' | Digit
+
+const SYMBOL: Mark[] = ['-', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
 // rolls = [3, 3, 10, 5, 5, 9, 0, 4, 6, 7, 0, 3, 7, 9, 1, 7, 3, 10, 10, 6]
 // return => [[3,3],[10],[5,5],[9,0],[4,6],[7,0],[3,7],[9,1],[7,3],[10,10,6]]
 
@@ -20,4 +26,49 @@ export function toFrames(rolls: number[]): number[][] {
   result.push(rolls.slice(index))
 
   return result
+}
+
+function toSymbol(pins: Pins): Mark {
+  return SYMBOL[pins] ?? ''
+}
+
+export function toMarks(frame: number[], isTenFrame: boolean): string[] {
+  return isTenFrame ? tenFrameMark(frame) : normalMark(frame)
+}
+
+function normalMark(frame: number[]): Mark[] {
+  const [first, second] = frame
+
+  // 볼링 스코어 표기 규칙 케이스 먼저 처리
+  // undefined 는 아직 안 던졌다는 뜻 - 배열 내에 없음
+  if (first === undefined) return ['', '']
+  if (first === 10) return ['', 'X']
+  if (second === undefined) return [toSymbol(first), '']
+  if (first + second === 10) return [toSymbol(first), '/']
+
+  // 이하 모두 던졌고, 0~9 숫자에 속하는 경우
+  return [toSymbol(first), toSymbol(second)]
+}
+
+function tenFrameMark(frame: number[]): string[] {
+  const [first, second, third] = frame ?? []
+
+  if (first === undefined) return ['', '', '']
+  if (first === 10) {
+    if (second === undefined) return ['X', '', '']
+    if (second === 10) {
+      const thirdSymbol = third === undefined ? '' : third === 10 ? 'X' : toSymbol(third)
+      return ['X', 'X', thirdSymbol]
+    }
+    const thirdSymbol = third === undefined ? '' : second + third === 10 ? '/' : toSymbol(third)
+    return ['X', toSymbol(second), thirdSymbol]
+  }
+  if (second === undefined) return [toSymbol(first), '', '']
+  if (first + second === 10) {
+    const thirdSymbol = third === undefined ? '' : third === 10 ? 'X' : toSymbol(third)
+    return [toSymbol(first), '/', thirdSymbol]
+  }
+  if (third === undefined) return [toSymbol(first), toSymbol(second), '']
+
+  return [toSymbol(first), toSymbol(second), toSymbol(third)]
 }

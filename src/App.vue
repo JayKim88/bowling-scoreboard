@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { toFrames } from './domain/frames'
+import { toFrames, toMarks } from './domain/frames'
 
 const pinOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -8,8 +8,7 @@ const rolls = ref<number[]>([])
 
 const frames = computed(() => toFrames(rolls.value))
 
-// 칸 수 맞추기는 기호 표시와 함께 처리예정
-const cells = computed(() => frames.value.flat())
+const marks = computed(() => frames.value.flatMap((frame, i) => toMarks(frame, i === 9)))
 
 function addRoll(pins: number) {
   rolls.value.push(pins)
@@ -30,7 +29,9 @@ function addRoll(pins: number) {
       <tbody>
         <!-- 투구 -->
         <tr>
-          <td v-for="(cell, i) in cells" :key="i" class="mark">{{ cell }}</td>
+          <td v-for="(mark, mi) in marks" :key="mi" class="mark">
+            {{ mark }}
+          </td>
         </tr>
         <!-- 누적합 -->
         <tr>
