@@ -1,4 +1,4 @@
-type Pins = number
+export type Pins = number
 type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 type Mark = 'X' | '/' | '-' | '' | Digit
 
@@ -7,8 +7,8 @@ const SYMBOL: Mark[] = ['-', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 // rolls = [3, 3, 10, 5, 5, 9, 0, 4, 6, 7, 0, 3, 7, 9, 1, 7, 3, 10, 10, 6]
 // return => [[3,3],[10],[5,5],[9,0],[4,6],[7,0],[3,7],[9,1],[7,3],[10,10,6]]
 
-export function toFrames(rolls: number[]): number[][] {
-  const result: number[][] = []
+export function toFrames(rolls: Pins[]): Pins[][] {
+  const result: Pins[][] = []
   let index = 0
 
   // 1~9프레임

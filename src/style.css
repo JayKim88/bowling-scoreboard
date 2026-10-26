@@ -31,9 +31,14 @@ body {
 .pins {
   display: flex;
   gap: 4px;
+  margin-top: 24px;
 }
 
 .pins button {
   width: 40px;
   height: 36px;
+}
+
+.pins button:disabled {
+  opacity: 0.5;
 }
