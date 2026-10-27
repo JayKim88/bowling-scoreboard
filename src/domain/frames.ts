@@ -50,25 +50,23 @@ function normalMark(frame: number[]): Mark[] {
   return [toSymbol(first), toSymbol(second)]
 }
 
+function getThirdSymbol(pins?: number) {
+  return pins === undefined ? '' : pins === 10 ? 'X' : toSymbol(pins)
+}
+
 function tenFrameMark(frame: number[]): string[] {
-  const [first, second, third] = frame ?? []
+  const [first, second, third] = frame
 
   if (first === undefined) return ['', '', '']
   if (first === 10) {
     if (second === undefined) return ['X', '', '']
-    if (second === 10) {
-      const thirdSymbol = third === undefined ? '' : third === 10 ? 'X' : toSymbol(third)
-      return ['X', 'X', thirdSymbol]
-    }
-    const thirdSymbol = third === undefined ? '' : second + third === 10 ? '/' : toSymbol(third)
-    return ['X', toSymbol(second), thirdSymbol]
+    if (second === 10) return ['X', 'X', getThirdSymbol(third)]
+
+    const isSpareCleared = third !== undefined && second + third === 10
+    return ['X', toSymbol(second), isSpareCleared ? '/' : getThirdSymbol(third)]
   }
   if (second === undefined) return [toSymbol(first), '', '']
-  if (first + second === 10) {
-    const thirdSymbol = third === undefined ? '' : third === 10 ? 'X' : toSymbol(third)
-    return [toSymbol(first), '/', thirdSymbol]
-  }
-  if (third === undefined) return [toSymbol(first), toSymbol(second), '']
 
-  return [toSymbol(first), toSymbol(second), toSymbol(third)]
+  const isSpareCleared = first + second === 10
+  return [toSymbol(first), isSpareCleared ? '/' : toSymbol(second), getThirdSymbol(third)]
 }
