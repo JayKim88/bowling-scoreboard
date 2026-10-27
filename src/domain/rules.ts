@@ -1,7 +1,7 @@
 import { toFrames, type Pins } from './frames'
 
 export function maxPinsForNextRoll(rolls: Pins[]) {
-  // 0 ~ 9 프레임
+  // 1 ~ 9 프레임
   const frames = toFrames(rolls)
 
   for (let i = 0; i < 9; i++) {
@@ -12,6 +12,17 @@ export function maxPinsForNextRoll(rolls: Pins[]) {
     if (second === undefined) return 10 - first // 두번째 던질 차례
   }
 
-  // 10프레임은 모든 투구에서 10까지 나올수 있음
-  return 10
+  // 10 프레임
+  const [first, second, third] = frames[9] ?? []
+
+  if (first === undefined) return 10
+  if (second === undefined) return first === 10 ? 10 : 10 - first
+
+  const hasThird = first === 10 || first + second === 10 // 3투구 기회 취득 조건
+
+  if (!hasThird || third !== undefined) return null
+
+  const spareCase = first === 10 && second < 10
+
+  return spareCase ? 10 - second : 10
 }

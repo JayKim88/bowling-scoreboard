@@ -46,7 +46,7 @@ function addRoll(pins: number) {
         :key="pins"
         type="button"
         @click="addRoll(pins)"
-        :disabled="maxPins < pins"
+        :disabled="maxPins === null || maxPins < pins"
       >
         {{ pins }}
       </button>
