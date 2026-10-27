@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import ScoreBoard from './components/ScoreBoard.vue'
+import PinButtons from './components/PinButtons.vue'
 import { toFrames, toMarks } from './domain/frames'
 import { maxPinsForNextRoll } from './domain/rules'
-
-const pinOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 const rolls = ref<number[]>([])
 
@@ -19,37 +19,7 @@ function addRoll(pins: number) {
 <template>
   <main>
     <h1>볼링 스코어보드</h1>
-    <table class="scoreboard">
-      <!-- 프레임 -->
-      <thead>
-        <tr>
-          <th v-for="n in 10" :key="n" :colspan="n === 10 ? 3 : 2">{{ n }}</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <!-- 투구 -->
-        <tr>
-          <td v-for="(mark, mi) in marks" :key="mi" class="mark">
-            {{ mark }}
-          </td>
-        </tr>
-        <!-- 누적합 -->
-        <tr>
-          <td v-for="n in 10" :key="n" :colspan="n === 10 ? 3 : 2" class="score"></td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="pins">
-      <button
-        v-for="pins in pinOptions"
-        :key="pins"
-        type="button"
-        @click="addRoll(pins)"
-        :disabled="maxPins === null || maxPins < pins"
-      >
-        {{ pins }}
-      </button>
-    </div>
+    <ScoreBoard :marks="marks" />
+    <PinButtons :max-pins="maxPins" @roll="addRoll" />
   </main>
 </template>

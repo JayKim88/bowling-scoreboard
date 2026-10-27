@@ -1,6 +1,6 @@
 export type Pins = number
 type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-type Mark = 'X' | '/' | '-' | '' | Digit
+export type Mark = 'X' | '/' | '-' | '' | Digit
 
 const SYMBOL: Mark[] = ['-', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
@@ -32,11 +32,11 @@ function toSymbol(pins: Pins): Mark {
   return SYMBOL[pins] ?? ''
 }
 
-export function toMarks(frame: number[], isTenFrame: boolean): string[] {
+export function toMarks(frame: Pins[], isTenFrame: boolean): Mark[] {
   return isTenFrame ? tenFrameMark(frame) : normalMark(frame)
 }
 
-function normalMark(frame: number[]): Mark[] {
+function normalMark(frame: Pins[]): Mark[] {
   const [first, second] = frame
 
   // 볼링 스코어 표기 규칙 케이스 먼저 처리
@@ -50,23 +50,23 @@ function normalMark(frame: number[]): Mark[] {
   return [toSymbol(first), toSymbol(second)]
 }
 
-function getThirdSymbol(pins?: number) {
+function toThirdSymbol(pins?: Pins): Mark {
   return pins === undefined ? '' : pins === 10 ? 'X' : toSymbol(pins)
 }
 
-function tenFrameMark(frame: number[]): string[] {
+function tenFrameMark(frame: Pins[]): Mark[] {
   const [first, second, third] = frame
 
   if (first === undefined) return ['', '', '']
   if (first === 10) {
     if (second === undefined) return ['X', '', '']
-    if (second === 10) return ['X', 'X', getThirdSymbol(third)]
+    if (second === 10) return ['X', 'X', toThirdSymbol(third)]
 
     const isSpareCleared = third !== undefined && second + third === 10
-    return ['X', toSymbol(second), isSpareCleared ? '/' : getThirdSymbol(third)]
+    return ['X', toSymbol(second), isSpareCleared ? '/' : toThirdSymbol(third)]
   }
   if (second === undefined) return [toSymbol(first), '', '']
 
   const isSpareCleared = first + second === 10
-  return [toSymbol(first), isSpareCleared ? '/' : toSymbol(second), getThirdSymbol(third)]
+  return [toSymbol(first), isSpareCleared ? '/' : toSymbol(second), toThirdSymbol(third)]
 }
