@@ -1,0 +1,72 @@
+export type Pins = number
+type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+export type Mark = 'X' | '/' | '-' | '' | Digit
+
+const SYMBOL: Mark[] = ['-', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+// rolls = [3, 3, 10, 5, 5, 9, 0, 4, 6, 7, 0, 3, 7, 9, 1, 7, 3, 10, 10, 6]
+// return => [[3,3],[10],[5,5],[9,0],[4,6],[7,0],[3,7],[9,1],[7,3],[10,10,6]]
+
+export function toFrames(rolls: Pins[]): Pins[][] {
+  const result: Pins[][] = []
+  let index = 0
+
+  // 1~9프레임
+  for (let f = 0; f < 9; f++) {
+    if (rolls[index] === 10) {
+      result.push([10])
+      index += 1
+    } else {
+      result.push(rolls.slice(index, index + 2))
+      index += 2
+    }
+  }
+
+  // 10프레임 - 나머지 롤들 모두 넣어줌
+  result.push(rolls.slice(index))
+
+  return result
+}
+
+function toSymbol(pins: Pins): Mark {
+  return SYMBOL[pins] ?? ''
+}
+
+export function toMarks(frame: Pins[], isTenFrame: boolean): Mark[] {
+  return isTenFrame ? tenFrameMark(frame) : normalMark(frame)
+}
+
+function normalMark(frame: Pins[]): Mark[] {
+  const [first, second] = frame
+
+  // 볼링 스코어 표기 규칙 케이스 먼저 처리
+  // undefined 는 아직 안 던졌다는 뜻 - 배열 내에 없음
+  if (first === undefined) return ['', '']
+  if (first === 10) return ['', 'X']
+  if (second === undefined) return [toSymbol(first), '']
+  if (first + second === 10) return [toSymbol(first), '/']
+
+  // 이하 모두 던졌고, 0~9 숫자에 속하는 경우
+  return [toSymbol(first), toSymbol(second)]
+}
+
+function toThirdSymbol(pins?: Pins): Mark {
+  return pins === undefined ? '' : pins === 10 ? 'X' : toSymbol(pins)
+}
+
+function tenFrameMark(frame: Pins[]): Mark[] {
+  const [first, second, third] = frame
+
+  if (first === undefined) return ['', '', '']
+  if (first === 10) {
+    if (second === undefined) return ['X', '', '']
+    if (second === 10) return ['X', 'X', toThirdSymbol(third)]
+
+    const isSpareCleared = third !== undefined && second + third === 10
+    return ['X', toSymbol(second), isSpareCleared ? '/' : toThirdSymbol(third)]
+  }
+  if (second === undefined) return [toSymbol(first), '', '']
+
+  const isSpareCleared = first + second === 10
+  return [toSymbol(first), isSpareCleared ? '/' : toSymbol(second), toThirdSymbol(third)]
+}
