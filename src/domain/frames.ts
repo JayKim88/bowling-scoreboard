@@ -1,6 +1,5 @@
 export type Pins = number
-type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-export type Mark = 'X' | '/' | '-' | '' | Digit
+export type Mark = 'X' | '/' | '-' | '' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 
 const SYMBOL: Mark[] = ['-', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
@@ -39,7 +38,7 @@ export function toMarks(frame: Pins[], isTenFrame: boolean): Mark[] {
 function normalMark(frame: Pins[]): Mark[] {
   const [first, second] = frame
 
-  // 볼링 스코어 표기 규칙 케이스 먼저 처리
+  // 빈문자열로 채워주는 이유는 전광판에 빈칸을 만들기 위함
   // undefined 는 아직 안 던졌다는 뜻 - 배열 내에 없음
   if (first === undefined) return ['', '']
   if (first === 10) return ['', 'X']
