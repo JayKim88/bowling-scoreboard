@@ -1,9 +1,9 @@
 import { toFrames, type Pins } from './frames'
 
 export function maxPinsForNextRoll(rolls: Pins[]): number | null {
-  // 1 ~ 9 프레임
   const frames = toFrames(rolls)
 
+  // 1 ~ 9 프레임
   for (let i = 0; i < 9; i++) {
     const [first, second] = frames[i] ?? []
 
@@ -20,6 +20,7 @@ export function maxPinsForNextRoll(rolls: Pins[]): number | null {
 
   const hasThird = first === 10 || first + second === 10 // 3투구 기회 취득 조건
 
+  // 3투구 기회가 없거나 3투구까지 진행되어 종료된 케이스
   if (!hasThird || third !== undefined) return null
 
   const spareCase = first === 10 && second < 10
@@ -35,11 +36,25 @@ export function frameScores(frames: Pins[][]): number[] {
     const [first, second] = frames[i] ?? []
     const accSum = i > 0 ? result[i - 1] : 0
     const firstOfNextFrame = frames[i + 1]?.[0]
+    const secondOfNextFrame = frames[i + 1]?.[1]
 
     if (first === undefined) break
     if (first === 10) {
       if (firstOfNextFrame === undefined) break
-      result[i] = accSum + 10 + firstOfNextFrame
+      if (firstOfNextFrame === 10) {
+        if (i === 8) {
+          if (secondOfNextFrame === undefined) break
+          // 9, 10프레임의 첫투구가 X인 경우, 9프레임 총합에 10프레임의 두번째 투구값을 더해야 함
+          result[i] = accSum + 10 + 10 + secondOfNextFrame
+        } else {
+          const firstOfNextNextFrame = frames[i + 2]?.[0]
+          if (firstOfNextNextFrame === undefined) break
+          result[i] = accSum + 10 + 10 + firstOfNextNextFrame
+        }
+      } else {
+        if (secondOfNextFrame === undefined) break
+        result[i] = accSum + first + firstOfNextFrame + secondOfNextFrame
+      }
       continue
     }
     if (second === undefined) break
