@@ -28,7 +28,8 @@ export function maxPinsForNextRoll(rolls: Pins[]): number | null {
   return spareCase ? 10 - second : 10
 }
 
-export function frameScores(frames: Pins[][]): number[] {
+export function scoresFromFrames(rolls: Pins[]): number[] {
+  const frames = toFrames(rolls)
   const result = new Array(10).fill('')
 
   // 1 ~ 9 프레임
@@ -73,6 +74,37 @@ export function frameScores(frames: Pins[][]): number[] {
 
   if (gameNotEnded) return result
   result[9] = result[8] + first + second + (third ?? 0)
+
+  return result
+}
+
+export function scoresFromRolls(rolls: Pins[]) {
+  const result = new Array(10).fill('')
+  let rIdx = 0
+
+  for (let f = 0; f < 10; f++) {
+    const accSum = f > 0 ? result[f - 1] : 0
+    const roll = rolls[rIdx]
+    const nextRoll = rolls[rIdx + 1]
+    const nextNextRoll = rolls[rIdx + 2]
+
+    if (roll === undefined) break
+    if (roll === 10) {
+      if (nextRoll === undefined || nextNextRoll === undefined) break
+      result[f] = accSum + 10 + nextRoll + nextNextRoll
+      rIdx += 1
+      continue
+    }
+    if (nextRoll === undefined) break
+    if (roll + nextRoll === 10) {
+      if (nextNextRoll === undefined) break
+      result[f] = accSum + 10 + nextNextRoll
+      rIdx += 2
+    } else {
+      result[f] = accSum + roll + nextRoll
+      rIdx += 2
+    }
+  }
 
   return result
 }
