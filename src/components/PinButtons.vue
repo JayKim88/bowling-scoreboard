@@ -23,7 +23,6 @@ const emit = defineEmits<{ roll: [pins: number] }>()
 .pins {
   display: flex;
   gap: 4px;
-  margin-top: 24px;
 }
 
 .pins button {
