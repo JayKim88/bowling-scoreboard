@@ -1,4 +1,5 @@
-import { toFrames, type Pins } from './frames'
+import { toFrames } from './frames'
+import { type Pins } from './types'
 
 export function maxPinsForNextRoll(rolls: Pins[]): number | null {
   const frames = toFrames(rolls)

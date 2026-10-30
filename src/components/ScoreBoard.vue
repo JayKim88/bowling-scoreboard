@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Mark } from '../domain/frames'
+import type { Mark } from '@/domain/types'
 
 defineProps<{ marks: Mark[]; scores: number[] }>()
 </script>
